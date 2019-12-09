@@ -14,4 +14,4 @@ USER cuberite-user
 COPY --chown=cuberite-user:cuberite-user *.default.ini ./
 COPY --chown=cuberite-user:cuberite-user start-server.sh .
 COPY --chown=cuberite-user:cuberite-user --from=download Server .
-CMD ["./start-server.sh"]
+ENTRYPOINT ["./start-server.sh"]
