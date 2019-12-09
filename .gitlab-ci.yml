@@ -1,0 +1,23 @@
+image: docker:19.03.4
+
+stages:
+  - build
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_IMAGE_NAME: $CI_REGISTRY/$CI_REGISTRY_IMAGE
+
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+Build image:
+  stage: build
+  tags:
+    - GameBase
+    - docker
+  script:
+    - docker pull $DOCKER_IMAGE_NAME:latest || true
+    - docker build --cache-from $DOCKER_IMAGE_NAME:latest --tag $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA --tag $DOCKER_IMAGE_NAME:latest cuberite
+    - docker push $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA
+    - docker push $DOCKER_IMAGE_NAME:latest
