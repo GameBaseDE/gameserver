@@ -17,7 +17,13 @@ Build image:
     - GameBase
     - docker
   script:
-    - docker pull $DOCKER_IMAGE_NAME:latest || true
-    - docker build --cache-from $DOCKER_IMAGE_NAME:latest --tag $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA --tag $DOCKER_IMAGE_NAME:latest cuberite
-    - docker push $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA
-    - docker push $DOCKER_IMAGE_NAME:latest
+    - |+
+      for server in servers/*/
+      do
+        docker pull $DOCKER_IMAGE_NAME:latest || true
+        docker build --cache-from $DOCKER_IMAGE_NAME:latest --tag $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA --tag $DOCKER_IMAGE_NAME:latest $server
+        echo "Built $server"
+        docker push $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA
+        docker push $DOCKER_IMAGE_NAME:latest
+        echo "Pushed $server"
+      done
