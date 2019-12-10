@@ -1,7 +1,7 @@
 image: docker:19.03.4
 
 stages:
-  - build
+  - cuberite
 
 variables:
   DOCKER_DRIVER: overlay2
@@ -12,18 +12,12 @@ before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 Build image:
-  stage: build
+  stage: cuberite
   tags:
     - GameBase
     - docker
   script:
-    - |+
-      for server in servers/*/
-      do
-        docker pull $DOCKER_IMAGE_NAME:latest || true
-        docker build --cache-from $DOCKER_IMAGE_NAME:latest --tag $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA --tag $DOCKER_IMAGE_NAME:latest $server
-        echo "Built $server"
-        docker push $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA
-        docker push $DOCKER_IMAGE_NAME:latest
-        echo "Pushed $server"
-      done
+    - docker pull $DOCKER_IMAGE_NAME:latest || true
+    - docker build --cache-from $DOCKER_IMAGE_NAME:latest --tag $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA --tag $DOCKER_IMAGE_NAME:latest servers/cuberite
+    - docker push $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA
+    - docker push $DOCKER_IMAGE_NAME:latest
