@@ -1,53 +1,62 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend
+  name: cuberite-service
+  namespace: user0 #Dynamic
   labels:
-    app: guestbook
-    tier: frontend
+    gameserver: cuberite
+    deployment: gameserver
 spec:
-  # comment or delete the following line if you want to use a LoadBalancer
   type: NodePort
-  # if your cluster supports it, uncomment the following to automatically create
-  # an external load-balanced IP for the frontend service.
-  # type: LoadBalancer
   ports:
-    - port: 80
+    - protocol: TCP
+      port: 80
+      targetPort: 80
   selector:
-    app: guestbook
-    tier: frontend
+    gameserver: cuberite
+    deployment: gameserver
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: cuberite-deployment
 spec:
   selector:
     matchLabels:
-      app: guestbook
-      tier: frontend
-  replicas: 3
+      gameserver: cuberite
+      deployment: gameserver
+  replicas: 1
   template:
     metadata:
+      namespace: user0 #Dynamic
       labels:
-        app: guestbook
-        tier: frontend
+        gameserver: cuberite
+        deployment: gameserver
     spec:
       containers:
-        - name: php-redis
-          image: gcr.io/google-samples/gb-frontend:v4
+        - name: cuberite-server
+          image: dregistry.gahr.dev/cuberite:latest
           resources:
-            requests:
-              cpu: 100m
-              memory: 100Mi
-          env:
-            - name: GET_HOSTS_FROM
-              value: dns
-              # If your cluster config does not include a dns service, then to
-              # instead access environment variables to find service host
-              # info, comment out the 'value: dns' line above, and uncomment the
-              # line below:
-              # value: env
+            limits:
+              cpu: 1000m
+              memory: 1G
+          envFrom:
+            - configMapRef:
+                name: cuberite-config
+                optional: false
           ports:
             - containerPort: 80
-  © 2020 GitHub, Inc.
+              protocol: TCP
+---
+#kubectl create configmap C --from-env-file=servers\cuberite\default.env
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cuberite-config
+  namespace: default
+data:
+  DESCRIPTION: Cuberite Server deployed by Gamebase
+  PLAYERCOUNT: "11"
+  SERVER_PORT: "25565"
+  WEBADMIN_ENABLED: "1"
+  WEBADMIN_PORT: "8888"
