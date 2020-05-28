@@ -20,6 +20,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cuberite-deployment
+  namespace: user0 #Dynamic
 spec:
   selector:
     matchLabels:
@@ -44,9 +45,31 @@ spec:
             - configMapRef:
                 name: cuberite-config
                 optional: false
+          volumeMounts:
+            - name: cuberite-storage
+              mountPath: ./map
           ports:
             - containerPort: 80
               protocol: TCP
+      volumes:
+        - name: cuberite-storage
+          persistentVolumeClaim:
+            claimName: cuberite-pvclaim
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cuberite-pvclaim
+  namespace: user0 #Dynamic
+  labels:
+    gameserver: cuberite
+    deployment: gameserver
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    limits:
+      storage: 20Gi
 ---
 #kubectl create configmap C --from-env-file=servers\cuberite\default.env
 apiVersion: v1
