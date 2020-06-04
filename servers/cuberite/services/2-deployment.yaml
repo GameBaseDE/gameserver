@@ -23,6 +23,7 @@ spec:
             limits:
               cpu: 1000m
               memory: 1G
+          tty: true
           envFrom:
             - configMapRef:
                 name: cuberite
