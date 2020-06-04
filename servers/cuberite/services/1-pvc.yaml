@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cuberite
+  #namespace: user0 #Dynamic
+  labels:
+    gameserver: cuberite
+    deployment: gameserver
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100M
+    limits:
+      storage: 20Gi

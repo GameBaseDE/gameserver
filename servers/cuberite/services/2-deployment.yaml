@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cuberite
+  #namespace: user0 #Dynamic
+spec:
+  selector:
+    matchLabels:
+      gameserver: cuberite
+      deployment: gameserver
+  replicas: 1
+  template:
+    metadata:
+      #namespace: user0 #Dynamic
+      labels:
+        gameserver: cuberite
+        deployment: gameserver
+    spec:
+      containers:
+        - name: cuberite-server
+          image: dregistry.gahr.dev/cuberite:latest
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1G
+          envFrom:
+            - configMapRef:
+                name: cuberite
+                optional: false
+          volumeMounts:
+            - name: volume1
+              subPath: ./world
+              mountPath: ./world
+            - name: volume1
+              subPath: ./world_nether
+              mountPath: ./world_nether
+            - name: volume1
+              subPath: ./world_the_end
+              mountPath: ./world_the_end
+          ports:
+            - containerPort: 25565
+              protocol: TCP
+            - containerPort: 8888
+              protocol: TCP
+      volumes:
+        - name: volume1
+          persistentVolumeClaim:
+            claimName: cuberite
