@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cuberite
+  #namespace: user0 #Dynamic
+  labels:
+    gameserver: cuberite
+    deployment: gameserver
+spec:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      name: minecraft
+      port: 25565
+      #targetPort: 25565
+    - protocol: TCP
+      name: cuberite-webadmin
+      port: 8888
+      #targetPort: 8888
+  selector:
+    gameserver: cuberite
+    deployment: gameserver
