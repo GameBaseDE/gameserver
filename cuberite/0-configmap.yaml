@@ -1,0 +1,15 @@
+#kubectl create configmap C --from-env-file=servers\cuberite\default.env
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  generateName: GameServerTemplateConfigMap #This will be modified during creation to "templatename-ConfigMap-"
+  labels: #These Labels are used to attribute objects to individual Templates
+    gameserver: cuberite #Adapt
+    deploymentType: gameserver #This Label must not be changed
+    deploymentUUID: "12345" #Generated before deployment to cluster to uniquely identify deployments
+data:
+  DESCRIPTION: Cuberite Server deployed by Gamebase
+  PLAYERCOUNT: "11"
+  SERVER_PORT: "25565"
+  WEBADMIN_ENABLED: "1"
+  WEBADMIN_PORT: "8888"

@@ -18,6 +18,6 @@ Build image:
     - docker
   script:
     - docker pull $DOCKER_IMAGE_NAME:latest || true
-    - docker build --cache-from $DOCKER_IMAGE_NAME:latest --tag $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA --tag $DOCKER_IMAGE_NAME:latest servers/cuberite
+    - docker build --cache-from $DOCKER_IMAGE_NAME:latest --tag $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA --tag $DOCKER_IMAGE_NAME:latest cuberite/docker
     - docker push $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA
     - docker push $DOCKER_IMAGE_NAME:latest
