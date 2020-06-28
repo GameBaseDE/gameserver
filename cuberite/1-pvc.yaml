@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  generateName: GameServerTemplatePersistentVolumeClaim #This will be modified during creation to "templatename-PVC-"
+  labels: #These Labels are used to attribute objects to individual Templates
+    gameserver: cuberite #Adapt
+    deploymentType: gameserver #This Label must not be changed
+    deploymentUUID: "12345" #Generated before deployment to cluster to uniquely identify deployments
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100M
+    limits:
+      storage: 20Gi
