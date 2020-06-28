@@ -1,6 +1,7 @@
 FROM ubuntu:eoan AS download
 ADD https://builds.cuberite.org/job/Cuberite%20Linux%20x64%20Master/lastSuccessfulBuild/artifact/Cuberite.tar.gz .
-RUN tar -xf Cuberite.tar.gz
+RUN mkdir -p Server
+RUN tar -C Server/ -xf Cuberite.tar.gz
 
 FROM ubuntu:eoan
 LABEL maintainer="ngehrsitz"
