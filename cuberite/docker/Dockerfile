@@ -11,10 +11,12 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /cuberite
 RUN adduser --disabled-password --gecos '' cuberite-user
 RUN chown cuberite-user:cuberite-user /cuberite
-USER cuberite-user
 COPY --chown=cuberite-user:cuberite-user *.default.ini ./
-COPY --chown=cuberite-user:cuberite-user start-server.sh .
 COPY --chown=cuberite-user:cuberite-user --from=download Server .
+COPY --chown=cuberite-user:cuberite-user start-server.sh .
+RUN chmod 744 start-server.sh
+RUN chmod 744 Cuberite
+USER cuberite-user
 EXPOSE 25565/tcp
 EXPOSE 8080/tcp
 ENTRYPOINT ["./start-server.sh"]
