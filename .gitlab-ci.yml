@@ -1,21 +1,36 @@
 image: docker:19.03.4
 
 stages:
-  - cuberite
+  - cuberite-init
+  - cuberite-gs
 
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
-  DOCKER_IMAGE_NAME: $CI_REGISTRY/$CI_REGISTRY_IMAGE
 
 before_script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
 
-Build image:
-  stage: cuberite
+Build init image:
+  stage: cuberite-init
   tags:
     - GameBase
     - docker
+  variables:
+    DOCKER_IMAGE_NAME: $DOCKER_HUB_USER/cuberite-init
+  script:
+    - docker pull $DOCKER_IMAGE_NAME:latest || true
+    - docker build --cache-from $DOCKER_IMAGE_NAME:latest --tag $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA --tag $DOCKER_IMAGE_NAME:latest cuberite/docker-init
+    - docker push $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA
+    - docker push $DOCKER_IMAGE_NAME:latest
+
+Build Gameserver image:
+  stage: cuberite-gs
+  tags:
+    - GameBase
+    - docker
+  variables:
+    DOCKER_IMAGE_NAME: $DOCKER_HUB_USER/cuberite-server
   script:
     - docker pull $DOCKER_IMAGE_NAME:latest || true
     - docker build --cache-from $DOCKER_IMAGE_NAME:latest --tag $DOCKER_IMAGE_NAME:$CI_COMMIT_SHA --tag $DOCKER_IMAGE_NAME:latest cuberite/docker

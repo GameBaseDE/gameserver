@@ -21,9 +21,23 @@ spec:
         deploymentType: gameserver #This Label must not be changed
         deploymentUUID: "12345" #Generated before deployment to cluster to uniquely identify deployments
     spec:
+      initContainers:
+        - name: cuberite-init
+          image: gamebaseproject/cuberite-init:latest
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 50Mi
+          envFrom:
+            - configMapRef:
+                name: GameServerTemplateConfigMap #This Name will be overwritten with the previously created ConfigMap
+                optional: false
+          volumeMounts:
+            - name: volume1
+              mountPath: /volume
       containers:
         - name: cuberite-server
-          image: dregistry.gahr.dev/cuberite:latest
+          image: gamebaseproject/cuberite-server:latest
           resources:
             limits:
               cpu: 1000m
@@ -35,14 +49,38 @@ spec:
                 optional: false
           volumeMounts:
             - name: volume1
-              subPath: ./world
-              mountPath: ./world
+              subPath: settings.ini
+              mountPath: /cuberite/settings.ini
             - name: volume1
-              subPath: ./world_nether
-              mountPath: ./world_nether
+              subPath: webadmin.ini
+              mountPath: /cuberite/webadmin.ini
             - name: volume1
-              subPath: ./world_the_end
-              mountPath: ./world_the_end
+              subPath: world/
+              mountPath: /cuberite/world/
+            - name: volume1
+              subPath: world_nether/
+              mountPath: /cuberite/world_nether/
+            - name: volume1
+              subPath: world_the_end/
+              mountPath: /cuberite/world_the_end/
+            - name: volume1
+              subPath: logs/
+              mountPath: /cuberite/logs/
+            - name: volume1
+              subPath: players/
+              mountPath: /cuberite/players/
+            - name: volume1
+              subPath: data/MojangAPI.sqlite
+              mountPath: /cuberite/MojangAPI.sqlite
+            - name: volume1
+              subPath: data/Ranks.sqlite
+              mountPath: /cuberite/Ranks.sqlite
+            - name: volume1
+              subPath: data/banlist.sqlite
+              mountPath: /cuberite/banlist.sqlite
+            - name: volume1
+              subPath: data/whitelist.sqlite
+              mountPath: /cuberite/whitelist.sqlite
           ports:
             - containerPort: 25565
               protocol: TCP
@@ -52,3 +90,5 @@ spec:
         - name: volume1
           persistentVolumeClaim:
             claimName: GameServerTemplatePersistentVolumeClaim #This Name will be overwritten with the previously created PVC
+      securityContext:
+        fsGroup: 1000
