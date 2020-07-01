@@ -23,7 +23,7 @@ spec:
     spec:
       initContainers:
         - name: cuberite-init
-          image: dregistry.gahr.dev/cuberite-init:latest
+          image: gamebaseproject/cuberite-init:latest
           resources:
             limits:
               cpu: 1000m
@@ -37,7 +37,7 @@ spec:
               mountPath: /volume
       containers:
         - name: cuberite-server
-          image: dregistry.gahr.dev/cuberite-gs:latest
+          image: gamebaseproject/cuberite-server:latest
           resources:
             limits:
               cpu: 1000m
