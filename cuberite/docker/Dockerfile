@@ -3,20 +3,15 @@ ADD https://builds.cuberite.org/job/Cuberite%20Linux%20x64%20Master/lastSuccessf
 RUN mkdir -p Server
 RUN tar -C Server/ -xf Cuberite.tar.gz
 
-FROM ubuntu:eoan
+FROM ubuntu:focal
 LABEL maintainer="ngehrsitz"
-RUN apt-get update && apt-get install -y \
-    gettext-base \
-    && apt-get clean
 WORKDIR /cuberite
 RUN adduser --disabled-password --gecos '' cuberite-user
 RUN chown cuberite-user:cuberite-user /cuberite
-COPY --chown=cuberite-user:cuberite-user *.default.ini ./
 COPY --chown=cuberite-user:cuberite-user --from=download Server .
-COPY --chown=cuberite-user:cuberite-user start-server.sh .
-RUN chmod 744 start-server.sh
 RUN chmod 744 Cuberite
 USER cuberite-user
 EXPOSE 25565/tcp
 EXPOSE 8080/tcp
-ENTRYPOINT ["./start-server.sh"]
+ENTRYPOINT ["./Cuberite"]
+CMD ["--no-output-buffering"]
